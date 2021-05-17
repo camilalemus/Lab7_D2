@@ -48,3 +48,19 @@ int main(void)
 
     }
 }
+
+void Config_Timer0(void){
+    TimerConfigure(TIMER0_BASE, TIMER_CFG_PERIODIC); //Temporizador periodico
+    TimerLoadSet(TIMER0_BASE, TIMER_A, 20000000); //Para hacer 0.5 Hz, se pone 20MHz, ya q el reloj es de 40 MHz
+    TimerIntEnable(TIMER0_BASE, TIMER_TIMA_TIMEOUT); //Interrupt enable
+    TimerIntRegister(TIMER0_BASE, TIMER_A, Timer0IntHandler); //Establecer la ISR
+    IntEnable(INT_TIMER0A); // Interrupt enable
+    IntEnable(INT_UART0);
+    IntMasterEnable();
+    TimerEnable(TIMER0_BASE, TIMER_A); //Temporizador
+}
+
+void Timer0IntHandler(void){
+    TimerIntClear(TIMER0_BASE, TIMER_A);
+    state= !state;
+}
